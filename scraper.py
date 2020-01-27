@@ -19,9 +19,15 @@ import json
 import base64
 import mysql.connector
 import re
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
 from slugify import slugify
+from splinter import Browser
 import sys
-#import time
+import time
 import traceback
 #from urllib2 import HTTPError
 from urllib.error import HTTPError
@@ -140,6 +146,19 @@ def doesscrapeurlexist(scrapesitelist, scrapeurl):
             scrapesite_domain = (scrapesite, False)
     return scrapesite_domain if scrapesite_domain != '' else 0
 
+# *** --- Check if a certain HTML element still exists --- *** #
+def doeshtmlelementexist(selectedel):
+    if selectedel is None:
+        return False
+    childcount = 0
+    for el in selectedel:
+        if el is None:
+            continue
+        childcount = childcount + 1
+    if childcount == 0:
+        return False
+    return True
+
 # --> First, check if the database should be reset:
 
 #if bool(os.environ['MORPH_RESET_DB']):
@@ -203,85 +222,154 @@ for scrapsite in jsonscrapsites:
     if not scrapsite['scrapefield']['phantomjsimport']:
         scrapsite['scrapefield']['phantomjsimport'] = 'phantomjsimport_pagenumber'
     # >>> GET THE HTML <<< #
-    if scrapsite['scrapefield']['scrapetype'] == 'standard_morph_io':
-        html = ''
+    if scrapsite['scrapefield']['scrapetype'] == 'phantomjs_morph_io':
+        html_source = ''
         root = ''
         nextURLs = ''
         try:
-            html = scraperwiki.scrape(scrapsite['scrapeurl'],\
-                   user_agent='Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.101 Safari/537.36')
-            #print("HTML:")
-            #print(html)
-        except HTTPError as err:
-            if err.code == 302:
+            optionals = Options()
+            if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber' and\
+               scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_default':
+                optionals.add_argument('--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0"')
+            optionals.add_argument('--disable-dev-shm-usage')
+            optionals.add_argument('--disable-extensions')
+            optionals.add_argument('--no-sandbox')
+            optionals.add_experimental_option('prefs', {'intl.accept_languages': 'sv',\
+                                                        'profile.default_content_setting_values.geolocation': 1,\
+                                                        'profile.default_content_settings.geolocation': 1})
+            with Browser('chrome', headless=True, options=optionals) as browser:
+                browser.driver.set_page_load_timeout(300)
+                browser.driver.set_window_size(1920, 1080)
+                params = {"latitude": 59.3521,
+                  "longitude": 18.0041,
+                  "accuracy": 100}
+                response = browser.driver.execute_cdp_cmd("Page.setGeolocationOverride", params)
                 try:
-                    url_headers = {'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',\
-                    'User-Agent':'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.101 Safari/537.36',\
-                              'Accept-Encoding':'gzip, deflate',\
-                              'Accept-Language':'en-US,en;q=0.8'}
-                    url_session = requests.session()
-                    response = url_session.get(url=scrapsite['scrapeurl'], headers=url_headers)
-                    html = response.content
-                except:
-                    print(traceback.format_exc())
-            elif err.code == 404:
-                notfound = True
-                removeon404 = False
-                if scrapsite['scrapefield']['domainmisc']:
-                    if scrapsite['scrapefield']['domainmisc'].find('allow_remove_on_404'):
-                        removeon404 = True
-                try:
-                    scraperwiki.sqlite.save(unique_keys=['scrapeurl'],\
-                                data={'scrapeurl': scrapsite['scrapeurl'],\
-                                      'domain': scrapsite['scrapefield']['domain'],\
-                                      'domainname': scrapsite['scrapefield']['domainname'],\
-                                      'currencysymbol': scrapsite['scrapefield']['currencysymbol'],\
-                                      'type': scrapsite['scrapefield']['type'],\
-                                      'scrapetype': scrapsite['scrapefield']['scrapetype'],\
-                                      'phantomjsimport': scrapsite['scrapefield']['phantomjsimport'],\
-                                      'titleselector': scrapsite['scrapefield']['titleselector'],\
-                                      'productselector': scrapsite['scrapefield']['productselector'],\
-                                      'priceselector': scrapsite['scrapefield']['priceselector'],\
-                                      'urlselector': scrapsite['scrapefield']['urlselector'],\
-                                      'salespriceselector': scrapsite['scrapefield']['salespriceselector'],\
-                                      'imageselector': scrapsite['scrapefield']['imageselector'],\
-                                      'productlogoselector': scrapsite['scrapefield']['productlogoselector'],\
-                                      'domainmisc': scrapsite['scrapefield']['domainmisc'],\
-                                      'productnumberselector': scrapsite['scrapefield']['productnumberselector'],\
-                                      'productloadmoreselector': scrapsite['scrapefield']['productloadmoreselector'],\
-                                      'productlatestonly': scrapsite['scrapefield']['productlatestonly'],\
-                                      'productignorethisone': scrapsite['scrapefield']['productignorethisone'],\
-                                      'productnocommaasdelimiter': scrapsite['scrapefield']['productnocommaasdelimiter'],\
-                                      'shouldberemoved': removeon404}, table_name = 'urls')
-                    #'notfound': notfound,\
+                    if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber' or\
+                       scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_default':
+                        browser.visit(product['scrapeurl'])
+                        time.sleep(2)
+                        html_source = browser.html
+                        if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber':
+                            temp_root = lxml.html.fromstring(html_source)
+                            scrapsite['scrapefield']['productnumberselector'] = scrapsite['scrapefield']['productnumberselector'].encode().decode("unicode-escape")
+                            url_elements = temp_root.cssselect(scrapsite['scrapefield']['productnumberselector'])
+                            if url_elements:
+                                nextURLs = graburls(str(etree.tostring(url_elements[0])), False)
+                    else:
+                        browser.driver.set_script_timeout(300)
+                        try:
+                            browser.visit(product['scrapeurl'])
+                            time.sleep(2)
+                            html_source = browser.html
+                            if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber_alt':
+                                temp_root = lxml.html.fromstring(html_source)
+                                childrenCount = 0
+                                childrenCountNew = 0
+                                scrapsite['scrapefield']['productselector'] = scrapsite['scrapefield']['productnumberselector'].encode().decode("unicode-escape")
+                                scrapsite['scrapefield']['productloadmoreselector'] = scrapsite['scrapefield']['productloadmoreselector'].encode().decode("unicode-escape")
+                                exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector']))
+                                timeout = 40 # <-- Amount of seconds to run the whole thing
+                                scrollTime = 0.7 # <--- Amount of time to wait between each scroll
+                                start_time = datetime.now()
+                                while exists is True:
+                                    browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector'])).first.click()
+                                    time.sleep(1.5)
+                                    html_source = browser.html
+                                    temp_root = lxml.html.fromstring(html_source)
+                                    foundproducts = temp_root.cssselect(scrapsite['scrapefield']['productselector'])
+                                    products = []
+                                    if foundproducts:
+                                        for prod in foundproducts:
+                                            if prod is not None:
+                                                products.append(str(etree.tostring(prod)))
+                                    childrenCount = len(products)
+                                    childrenCountNew = childrenCount
+                                    if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
+                                        browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
+                                    while childrenCount == childrenCountNew:
+                                        browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector'])).first.click()
+                                        time.sleep(1.5)
+                                        html_source = browser.html
+                                        temp_root = lxml.html.fromstring(html_source)
+                                        products = []
+                                        if foundproducts:
+                                            for prod in foundproducts:
+                                                if prod is not None:
+                                                    products.append(str(etree.tostring(prod)))
+                                        childrenCountNew = len(products)
+                                        exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector']))
+                                        if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
+                                            browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
+                                        delta_time = datetime.now() - start_time
+                                        if delta_time.total_seconds() > timeout:
+                                            break
+                                    exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector']))
+                                    if delta_time.total_seconds() > timeout:
+                                            break
+                                html_source = browser.html
+                            else:
+                                scrapsite['scrapefield']['productnumberselector'] = scrapsite['scrapefield']['productnumberselector'].encode().decode("unicode-escape")
+                                html_source = browser.html
+                                temp_root = lxml.html.fromstring(html_source)
+                                url_elements = temp_root.cssselect(scrapsite['scrapefield']['productnumberselector'])
+                                if url_elements:
+                                    nextURLs = graburls(str(etree.tostring(url_elements[int(int(url_elements.len()) - 1)])), False)
+                        except:
+                            print(traceback.format_exc())
+                    browser.quit() 
+                    #browser.get(product['url'])
+                    #print("HTML:")
+                    #print(html)
+                except HTTPError as err:
+                    if err.code == 404:
+                        notfound = True
+                        removeon404 = False
+                        if scrapsite['scrapefield']['domainmisc']:
+                            if scrapsite['scrapefield']['domainmisc'].find('allow_remove_on_404'):
+                                removeon404 = True
+                        try:
+                            scraperwiki.sqlite.save(unique_keys=['scrapeurl'],\
+                                        data={'scrapeurl': scrapsite['scrapeurl'],\
+                                              'domain': scrapsite['scrapefield']['domain'],\
+                                              'domainname': scrapsite['scrapefield']['domainname'],\
+                                              'currencysymbol': scrapsite['scrapefield']['currencysymbol'],\
+                                              'type': scrapsite['scrapefield']['type'],\
+                                              'scrapetype': scrapsite['scrapefield']['scrapetype'],\
+                                              'phantomjsimport': scrapsite['scrapefield']['phantomjsimport'],\
+                                              'titleselector': scrapsite['scrapefield']['titleselector'],\
+                                              'productselector': scrapsite['scrapefield']['productselector'],\
+                                              'priceselector': scrapsite['scrapefield']['priceselector'],\
+                                              'urlselector': scrapsite['scrapefield']['urlselector'],\
+                                              'salespriceselector': scrapsite['scrapefield']['salespriceselector'],\
+                                              'imageselector': scrapsite['scrapefield']['imageselector'],\
+                                              'productlogoselector': scrapsite['scrapefield']['productlogoselector'],\
+                                              'domainmisc': scrapsite['scrapefield']['domainmisc'],\
+                                              'productnumberselector': scrapsite['scrapefield']['productnumberselector'],\
+                                              'productloadmoreselector': scrapsite['scrapefield']['productloadmoreselector'],\
+                                              'productlatestonly': scrapsite['scrapefield']['productlatestonly'],\
+                                              'productignorethisone': scrapsite['scrapefield']['productignorethisone'],\
+                                              'productnocommaasdelimiter': scrapsite['scrapefield']['productnocommaasdelimiter'],\
+                                              'shouldberemoved': removeon404}, table_name = 'urls')
+                            continue
+                        except:
+                            print(traceback.format_exc())
+                            continue
+                    else:
+                        raise
+                except WebDriverException:
+                    print('Chrome not reachable - The URL will be rescraped again!')
+                    jsonscrapsites.append(scrapsite)
+                    time.sleep(2)
                     continue
                 except:
                     print(traceback.format_exc())
-                    continue
-            else:
-                raise
-        except:
-            print(traceback.format_exc())
-            #HAPP
         # >>> GET THE HTML ROOT <<< #
-        root = lxml.html.fromstring(html)
+        root = lxml.html.fromstring(html_source)
         #print("ROOT:")
         #for r in root: print r
-        # >>> GET THE NEXT URL(S) <<< #
-        scrapsite['scrapefield']['productnumberselector'] = scrapsite['scrapefield']['productnumberselector'].encode().decode("unicode-escape")
-        if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber':
-            url_elements = root.cssselect(scrapsite['scrapefield']['productnumberselector'])
-            if url_elements:
-                nextURLs = graburls(str(etree.tostring(url_elements[0])), False)
-        elif scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber_alt':
-            url_elements = root.cssselect(scrapsite['scrapefield']['productnumberselector'])
-            if url_elements:
-                nextURLs = graburls(str(etree.tostring(url_elements[int(int(url_elements.len()) - 1)])), False)
-        elif scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_default':
-            print("Invalid scraping method - Can't use 'Standard' scraping type with method '" + scrapsite['scrapefield']['phantomjsimport'] + "'!")
-            continue
         # >>> HANDLE HTML <<< #
-        if html != '' and root != '':
+        if html_source != '' and root != '':
             # --> Go through the "next" URLs - Do they already exists? 
             # --> Regardless, make sure it's added to the current scraping queue if neccessary
             if nextURLs:
