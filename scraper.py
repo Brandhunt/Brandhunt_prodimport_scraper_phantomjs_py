@@ -276,6 +276,7 @@ for scrapsite in jsonscrapsites:
                         browser.driver.set_script_timeout(300)
                         try:
                             browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
+                            print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
                             time.sleep(2)
                             html_source = browser.html
                             if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber_alt':
@@ -301,6 +302,7 @@ for scrapsite in jsonscrapsites:
                                 while exists is True:
                                     if incr_link != '':
                                         browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
+                                        print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
                                         incr_link_startnumber = str(int(incr_link_startnumber) + 1)
                                     if onlyScrollDown is False:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
