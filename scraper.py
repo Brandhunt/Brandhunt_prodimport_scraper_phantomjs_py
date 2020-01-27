@@ -272,7 +272,7 @@ for scrapsite in jsonscrapsites:
                                 else:
                                     onlyScrollDown = True
                                     exists = True
-                                timeout = 40 # <-- Amount of seconds to run the whole thing
+                                timeout = 300 # <-- Amount of seconds to run the whole thing
                                 clickTime = 0.7 # <--- Amount of time to wait between each click
                                 scrollTime = 0.7 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
