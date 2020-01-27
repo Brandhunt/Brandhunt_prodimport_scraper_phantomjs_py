@@ -273,8 +273,8 @@ for scrapsite in jsonscrapsites:
                                     onlyScrollDown = True
                                     exists = True
                                 timeout = 300 # <-- Amount of seconds to run the whole thing
-                                clickTime = 0.7 # <--- Amount of time to wait between each click
-                                scrollTime = 0.7 # <--- Amount of time to wait between each scroll
+                                clickTime = 2 # <--- Amount of time to wait between each click
+                                scrollTime = 1 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
                                 cur_scrollheight = driver.execute_script("return document.body.scrollHeight")
                                 new_scrollheight = cur_scrollheight
