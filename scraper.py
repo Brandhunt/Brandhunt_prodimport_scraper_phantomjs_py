@@ -283,8 +283,8 @@ for scrapsite in jsonscrapsites:
                                 while exists is True:
                                     if onlyScrollDown is False:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
-                                        click_el = browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first
-                                        browser.execute_script("arguments[0].click();", click_el)
+                                        click_el = browser.driver.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first
+                                        browser.driver.execute_script("arguments[0].click();", click_el)
                                         time.sleep(clickTime)
                                     html_source = browser.html
                                     temp_root = lxml.html.fromstring(html_source)
@@ -302,8 +302,8 @@ for scrapsite in jsonscrapsites:
                                     while childrenCount == childrenCountNew:
                                         if onlyScrollDown is False:
                                             #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
-                                            click_el = browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first
-                                            browser.execute_script("arguments[0].click();", click_el)
+                                            click_el = browser.driver.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first
+                                            browser.driver.execute_script("arguments[0].click();", click_el)
                                             time.sleep(clickTime)
                                         html_source = browser.html
                                         temp_root = lxml.html.fromstring(html_source)
