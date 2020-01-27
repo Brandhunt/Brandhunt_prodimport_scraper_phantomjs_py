@@ -273,8 +273,8 @@ for scrapsite in jsonscrapsites:
                                     onlyScrollDown = True
                                     exists = True
                                 timeout = 300 # <-- Amount of seconds to run the whole thing
-                                clickTime = 2 # <--- Amount of time to wait between each click
-                                scrollTime = 2 # <--- Amount of time to wait between each scroll
+                                clickTime = 5 # <--- Amount of time to wait between each click
+                                scrollTime = 0.5 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
                                 #browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                                 #time.sleep(scrollTime)
