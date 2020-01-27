@@ -285,7 +285,7 @@ for scrapsite in jsonscrapsites:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
                                         click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
                                         browser.driver.execute_script("arguments[0].click();", click_el)
-                                        time.sleep(clickTime)
+                                        ###time.sleep(clickTime)
                                     html_source = browser.html
                                     temp_root = lxml.html.fromstring(html_source)
                                     foundproducts = temp_root.cssselect(scrapsite['scrapefield']['productselector'])
@@ -298,13 +298,13 @@ for scrapsite in jsonscrapsites:
                                     childrenCountNew = childrenCount
                                     if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
                                         browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                                        time.sleep(scrollTime)
+                                        ###time.sleep(scrollTime)
                                     while childrenCount == childrenCountNew:
                                         if onlyScrollDown is False:
                                             #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
                                             click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
                                             browser.driver.execute_script("arguments[0].click();", click_el)
-                                            time.sleep(clickTime)
+                                            ###time.sleep(clickTime)
                                         html_source = browser.html
                                         temp_root = lxml.html.fromstring(html_source)
                                         products = []
@@ -318,7 +318,7 @@ for scrapsite in jsonscrapsites:
                                         exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector'])) if onlyScrollDown is False else False
                                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
                                             browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                                            time.sleep(scrollTime)
+                                            ###time.sleep(scrollTime)
                                             new_scrollheight = browser.execute_script("return document.body.scrollHeight")
                                             print('scrollh: ' + str(cur_scrollheight))
                                             print('scrollhNEW: ' + str(new_scrollheight))
