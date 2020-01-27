@@ -228,14 +228,13 @@ for scrapsite in jsonscrapsites:
         nextURLs = ''
         try:
             optionals = Options()
-            if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber' and\
-               scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_default':
+            if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber' and scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_default':
                 optionals.add_argument('--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0"')
             optionals.add_argument('--disable-dev-shm-usage')
             optionals.add_argument('--disable-extensions')
             optionals.add_argument('--no-sandbox')
-            optionals.add_experimental_option('prefs', {'intl.accept_languages': 'sv',\
-                                                        'profile.default_content_setting_values.geolocation': 1,\
+            optionals.add_experimental_option('prefs', {'intl.accept_languages': 'sv',
+                                                        'profile.default_content_setting_values.geolocation': 1,
                                                         'profile.default_content_settings.geolocation': 1})
             with Browser('chrome', headless=True, options=optionals) as browser:
                 browser.driver.set_page_load_timeout(300)
@@ -245,8 +244,7 @@ for scrapsite in jsonscrapsites:
                   "accuracy": 100}
                 response = browser.driver.execute_cdp_cmd("Page.setGeolocationOverride", params)
                 try:
-                    if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber' or\
-                       scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_default':
+                    if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber' or scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_default':
                         browser.visit(product['scrapeurl'])
                         time.sleep(2)
                         html_source = browser.html
