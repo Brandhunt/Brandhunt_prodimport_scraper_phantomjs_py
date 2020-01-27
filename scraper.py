@@ -762,6 +762,7 @@ for scrapsite in jsonscrapsites:
                                         #print(domainmisc_array[i])
                                         if len(domainmisc_array[i]) > 0:
                                             count = 0
+                                            prod_sizes = []
                                             for el in domainmisc_array[i]:
                                                 #print(el.text)
                                                 #print(domainmisc_array[i][count].text)
