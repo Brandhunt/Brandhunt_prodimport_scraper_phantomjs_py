@@ -276,13 +276,15 @@ for scrapsite in jsonscrapsites:
                                 clickTime = 2 # <--- Amount of time to wait between each click
                                 scrollTime = 2 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
-                                browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                                time.sleep(scrollTime)
+                                #browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                                #time.sleep(scrollTime)
                                 cur_scrollheight = browser.execute_script("return document.body.scrollHeight")
                                 new_scrollheight = cur_scrollheight
                                 while exists is True:
                                     if onlyScrollDown is False:
-                                        browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
+                                        #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
+                                        click_el = browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first
+                                        browser.execute_script("arguments[0].click();", click_el)
                                         time.sleep(clickTime)
                                     html_source = browser.html
                                     temp_root = lxml.html.fromstring(html_source)
@@ -299,7 +301,9 @@ for scrapsite in jsonscrapsites:
                                         time.sleep(scrollTime)
                                     while childrenCount == childrenCountNew:
                                         if onlyScrollDown is False:
-                                            browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
+                                            #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
+                                            click_el = browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first
+                                            browser.execute_script("arguments[0].click();", click_el)
                                             time.sleep(clickTime)
                                         html_source = browser.html
                                         temp_root = lxml.html.fromstring(html_source)
