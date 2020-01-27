@@ -221,7 +221,7 @@ for scrapsite in jsonscrapsites:
         #print(scrapsite['scrapefield']['domainmisc'])
         output = re.search(r'({override_timeout}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
         if output is not None and len(output.group(1)) > 0:
-            incr_link = output.group(2)
+            override_timeout = output.group(2)
             scrapsite['scrapefield']['domainmisc'] = re.sub(r'({override_timeout}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
             #print(scrapsite['scrapefield']['domainmisc'])
         output = re.search(r'({incr_link}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
@@ -298,7 +298,7 @@ for scrapsite in jsonscrapsites:
                                     onlyScrollDown = True
                                     exists = True
                                 timeout = 300 if override_timeout == '' else int(override_timeout) # <-- Amount of seconds to run the whole thing
-                                print(timeout)
+                                #print(timeout)
                                 clickTime = 2 # <--- Amount of time to wait between each click
                                 scrollTime = 0.5 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
