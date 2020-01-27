@@ -293,7 +293,7 @@ for scrapsite in jsonscrapsites:
                                     childrenCount = len(products)
                                     childrenCountNew = childrenCount
                                     if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
-                                        browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
+                                        browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                                         time.sleep(scrollTime)
                                     while childrenCount == childrenCountNew:
                                         if onlyScrollDown is False:
@@ -309,7 +309,7 @@ for scrapsite in jsonscrapsites:
                                         childrenCountNew = len(products)
                                         exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector'])) if onlyScrollDown is False else False
                                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
-                                            browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
+                                            browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                                             time.sleep(scrollTime)
                                             new_scrollheight = browser.execute_script("return document.body.scrollHeight")
                                             if new_scrollheight == cur_scrollheight:
