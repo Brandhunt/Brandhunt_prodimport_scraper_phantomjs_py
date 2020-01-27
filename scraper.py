@@ -216,8 +216,14 @@ for scrapsite in jsonscrapsites:
     # --> Check if any product import values should be pre-fetched from the domain misc.
     incr_link = ''
     incr_link_startnumber = ''
+    override_timeout = ''
     if scrapsite['scrapefield']['domainmisc']:
         #print(scrapsite['scrapefield']['domainmisc'])
+        output = re.search(r'({override_timeout}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
+        if output is not None and len(output.group(1)) > 0:
+            incr_link = output.group(2)
+            scrapsite['scrapefield']['domainmisc'] = re.sub(r'({override_timeout}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
+            #print(scrapsite['scrapefield']['domainmisc'])
         output = re.search(r'({incr_link}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
         if output is not None and len(output.group(1)) > 0:
             incr_link = output.group(2)
@@ -276,8 +282,8 @@ for scrapsite in jsonscrapsites:
                         browser.driver.set_script_timeout(300)
                         try:
                             browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
-                            print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
-                            time.sleep(10)
+                            #print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
+                            time.sleep(2)
                             html_source = browser.html
                             if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber_alt':
                                 temp_root = lxml.html.fromstring(html_source)
@@ -291,9 +297,9 @@ for scrapsite in jsonscrapsites:
                                 else:
                                     onlyScrollDown = True
                                     exists = True
-                                timeout = 300 # <-- Amount of seconds to run the whole thing
-                                clickTime = 10 # <--- Amount of time to wait between each click
-                                scrollTime = 10 # <--- Amount of time to wait between each scroll
+                                timeout = 300 if override_timeout == '' else int(override_timeout) # <-- Amount of seconds to run the whole thing
+                                clickTime = 2 # <--- Amount of time to wait between each click
+                                scrollTime = 0.5 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
                                 #browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                                 #time.sleep(scrollTime)
@@ -302,8 +308,8 @@ for scrapsite in jsonscrapsites:
                                 while exists is True:
                                     if incr_link != '':
                                         browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
-                                        print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
-                                        time.sleep(10)
+                                        #print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
+                                        time.sleep(2)
                                         incr_link_startnumber = str(int(incr_link_startnumber) + 1)
                                     if onlyScrollDown is False:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
@@ -337,15 +343,15 @@ for scrapsite in jsonscrapsites:
                                                 if prod is not None:
                                                     products.append(str(etree.tostring(prod)))
                                         childrenCountNew = len(products)
-                                        print('chCOUNT: ' + str(childrenCount))
-                                        print('chCOUNTNEW: ' + str(childrenCountNew))
+                                        #print('chCOUNT: ' + str(childrenCount))
+                                        #print('chCOUNTNEW: ' + str(childrenCountNew))
                                         exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector'])) if onlyScrollDown is False else False
                                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
                                             browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                                             time.sleep(scrollTime)
                                             new_scrollheight = browser.execute_script("return document.body.scrollHeight")
-                                            print('scrollh: ' + str(cur_scrollheight))
-                                            print('scrollhNEW: ' + str(new_scrollheight))
+                                            #print('scrollh: ' + str(cur_scrollheight))
+                                            #print('scrollhNEW: ' + str(new_scrollheight))
                                             if new_scrollheight == cur_scrollheight:
                                                 break
                                             cur_scrollheight = new_scrollheight
