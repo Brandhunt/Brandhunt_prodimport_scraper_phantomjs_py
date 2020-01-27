@@ -303,6 +303,7 @@ for scrapsite in jsonscrapsites:
                                     if incr_link != '':
                                         browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
                                         print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
+                                        time.sleep(2)
                                         incr_link_startnumber = str(int(incr_link_startnumber) + 1)
                                     if onlyScrollDown is False:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
