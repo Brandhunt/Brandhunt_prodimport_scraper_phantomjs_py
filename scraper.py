@@ -218,11 +218,11 @@ for scrapsite in jsonscrapsites:
     incr_link_startnumber = ''
     if scrapsite['scrapefield']['domainmisc']:
         output = re.search(r'({incr_link}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
-        if len(output.group(1)) > 0:
+        if output is not None and len(output.group(1)) > 0:
             incr_link = output.group(2)
             scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link}.*?)\{', '', scrapsite['scrapefield']['domainmisc'])
             output = re.search(r'({incr_link_startnumber}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
-            if len(output.group(1)) > 0:
+            if output is not None and len(output.group(1)) > 0:
                 incr_link_startnumber = output.group(2)
                 scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link_startnumber}.*?)\{', '', scrapsite['scrapefield']['domainmisc'])
             else:
