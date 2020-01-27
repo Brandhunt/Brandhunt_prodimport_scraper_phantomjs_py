@@ -277,7 +277,7 @@ for scrapsite in jsonscrapsites:
                         try:
                             browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
                             print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
-                            time.sleep(2)
+                            time.sleep(10)
                             html_source = browser.html
                             if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber_alt':
                                 temp_root = lxml.html.fromstring(html_source)
@@ -292,8 +292,8 @@ for scrapsite in jsonscrapsites:
                                     onlyScrollDown = True
                                     exists = True
                                 timeout = 300 # <-- Amount of seconds to run the whole thing
-                                clickTime = 2 # <--- Amount of time to wait between each click
-                                scrollTime = 0.5 # <--- Amount of time to wait between each scroll
+                                clickTime = 10 # <--- Amount of time to wait between each click
+                                scrollTime = 10 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
                                 #browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                                 #time.sleep(scrollTime)
@@ -303,7 +303,7 @@ for scrapsite in jsonscrapsites:
                                     if incr_link != '':
                                         browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
                                         print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
-                                        time.sleep(2)
+                                        time.sleep(10)
                                         incr_link_startnumber = str(int(incr_link_startnumber) + 1)
                                     if onlyScrollDown is False:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
