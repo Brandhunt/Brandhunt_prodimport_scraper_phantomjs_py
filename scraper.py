@@ -273,7 +273,7 @@ for scrapsite in jsonscrapsites:
                                 scrollTime = 0.7 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
                                 while exists is True:
-                                    browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector'])).first.click()
+                                    browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
                                     time.sleep(1.5)
                                     html_source = browser.html
                                     temp_root = lxml.html.fromstring(html_source)
@@ -288,7 +288,7 @@ for scrapsite in jsonscrapsites:
                                     if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
                                         browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
                                     while childrenCount == childrenCountNew:
-                                        browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector'])).first.click()
+                                        browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
                                         time.sleep(1.5)
                                         html_source = browser.html
                                         temp_root = lxml.html.fromstring(html_source)
