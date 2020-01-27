@@ -320,6 +320,8 @@ for scrapsite in jsonscrapsites:
                                             browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                                             time.sleep(scrollTime)
                                             new_scrollheight = browser.execute_script("return document.body.scrollHeight")
+                                            print('scrollh: ' + str(cur_scrollheight))
+                                            print('scrollhNEW: ' + str(new_scrollheight))
                                             if new_scrollheight == cur_scrollheight:
                                                 break
                                             cur_scrollheight = new_scrollheight
