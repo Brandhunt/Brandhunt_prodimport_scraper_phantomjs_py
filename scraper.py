@@ -276,7 +276,7 @@ for scrapsite in jsonscrapsites:
                                 clickTime = 2 # <--- Amount of time to wait between each click
                                 scrollTime = 1 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
-                                cur_scrollheight = driver.execute_script("return document.body.scrollHeight")
+                                cur_scrollheight = browser.execute_script("return document.body.scrollHeight")
                                 new_scrollheight = cur_scrollheight
                                 while exists is True:
                                     if onlyScrollDown is False:
@@ -311,7 +311,7 @@ for scrapsite in jsonscrapsites:
                                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
                                             browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
                                             time.sleep(scrollTime)
-                                            new_scrollheight = driver.execute_script("return document.body.scrollHeight")
+                                            new_scrollheight = browser.execute_script("return document.body.scrollHeight")
                                             if new_scrollheight == cur_scrollheight:
                                                 break
                                             cur_scrollheight = new_scrollheight
