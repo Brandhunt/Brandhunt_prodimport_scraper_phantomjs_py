@@ -365,9 +365,11 @@ for scrapsite in jsonscrapsites:
                     continue
                 except:
                     print(traceback.format_exc())
-        print('HEPP')
+        except:
+            print(traceback.format_exc())
+        #print('HEPP')
         # >>> GET THE HTML ROOT <<< #
-        print(html_source)
+        #print(html_source)
         root = lxml.html.fromstring(html_source)
         #print("ROOT:")
         #for r in root: print r
