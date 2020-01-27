@@ -262,18 +262,24 @@ for scrapsite in jsonscrapsites:
                             html_source = browser.html
                             if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber_alt':
                                 temp_root = lxml.html.fromstring(html_source)
+                                onlyScrollDown = False
                                 childrenCount = 0
                                 childrenCountNew = 0
                                 scrapsite['scrapefield']['productselector'] = scrapsite['scrapefield']['productnumberselector'].encode().decode("unicode-escape")
                                 scrapsite['scrapefield']['productloadmoreselector'] = scrapsite['scrapefield']['productloadmoreselector'].encode().decode("unicode-escape")
-                                exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector']))
+                                if scrapsite['scrapefield']['productloadmoreselector'] != '':    
+                                    exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector']))
+                                else:
+                                    onlyScrollDown = True
+                                    exists = True
                                 timeout = 40 # <-- Amount of seconds to run the whole thing
                                 clickTime = 0.7 # <--- Amount of time to wait between each click
                                 scrollTime = 0.7 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
                                 while exists is True:
-                                    browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
-                                    time.sleep(clickTime)
+                                    if onlyScrollDown is False:
+                                        browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
+                                        time.sleep(clickTime)
                                     html_source = browser.html
                                     temp_root = lxml.html.fromstring(html_source)
                                     foundproducts = temp_root.cssselect(scrapsite['scrapefield']['productselector'])
@@ -288,8 +294,9 @@ for scrapsite in jsonscrapsites:
                                         browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
                                         time.sleep(scrollTime)
                                     while childrenCount == childrenCountNew:
-                                        browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
-                                        time.sleep(clickTime)
+                                        if onlyScrollDown is False:
+                                            browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
+                                            time.sleep(clickTime)
                                         html_source = browser.html
                                         temp_root = lxml.html.fromstring(html_source)
                                         products = []
@@ -298,14 +305,14 @@ for scrapsite in jsonscrapsites:
                                                 if prod is not None:
                                                     products.append(str(etree.tostring(prod)))
                                         childrenCountNew = len(products)
-                                        exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector']))
+                                        exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector'])) if onlyScrollDown is False else False
                                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
                                             browser.execute_script("window.scrollTo(0, -document.body.scrollHeight);")
                                             time.sleep(scrollTime)
                                         delta_time = datetime.now() - start_time
                                         if delta_time.total_seconds() > timeout:
                                             break
-                                    exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector']))
+                                    exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector'])) if onlyScrollDown is False else False
                                     if delta_time.total_seconds() > timeout:
                                             break
                                 html_source = browser.html
