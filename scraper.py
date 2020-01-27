@@ -274,7 +274,7 @@ for scrapsite in jsonscrapsites:
                                     exists = True
                                 timeout = 300 # <-- Amount of seconds to run the whole thing
                                 clickTime = 2 # <--- Amount of time to wait between each click
-                                scrollTime = 1 # <--- Amount of time to wait between each scroll
+                                scrollTime = 2 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
                                 cur_scrollheight = browser.execute_script("return document.body.scrollHeight")
                                 new_scrollheight = cur_scrollheight
@@ -319,8 +319,9 @@ for scrapsite in jsonscrapsites:
                                         if delta_time.total_seconds() > timeout:
                                             break
                                     exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector'])) if onlyScrollDown is False else False
+                                    delta_time = datetime.now() - start_time
                                     if delta_time.total_seconds() > timeout:
-                                            break
+                                        break
                                 html_source = browser.html
                             else:
                                 scrapsite['scrapefield']['productnumberselector'] = scrapsite['scrapefield']['productnumberselector'].encode().decode("unicode-escape")
