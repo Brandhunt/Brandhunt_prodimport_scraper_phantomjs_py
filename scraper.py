@@ -20,6 +20,7 @@ import base64
 import mysql.connector
 import re
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
@@ -333,9 +334,14 @@ for scrapsite in jsonscrapsites:
                                     while childrenCount == childrenCountNew:
                                         if onlyScrollDown is False:
                                             #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
-                                            click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
-                                            browser.driver.execute_script("arguments[0].click();", click_el)
-                                            time.sleep(clickTime)
+                                            try:
+                                                click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
+                                                browser.driver.execute_script("arguments[0].click();", click_el)
+                                                time.sleep(clickTime)
+                                            except NoSuchElementException:
+                                                pass
+                                            except:
+                                                print(traceback.format_exc())
                                         html_source = browser.html
                                         temp_root = lxml.html.fromstring(html_source)
                                         products = []
