@@ -265,7 +265,7 @@ for scrapsite in jsonscrapsites:
                                 onlyScrollDown = False
                                 childrenCount = 0
                                 childrenCountNew = 0
-                                scrapsite['scrapefield']['productselector'] = scrapsite['scrapefield']['productnumberselector'].encode().decode("unicode-escape")
+                                scrapsite['scrapefield']['productselector'] = scrapsite['scrapefield']['productselector'].encode().decode("unicode-escape")
                                 scrapsite['scrapefield']['productloadmoreselector'] = scrapsite['scrapefield']['productloadmoreselector'].encode().decode("unicode-escape")
                                 if scrapsite['scrapefield']['productloadmoreselector'] != '':    
                                     exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector']))
