@@ -245,7 +245,7 @@ for scrapsite in jsonscrapsites:
                 response = browser.driver.execute_cdp_cmd("Page.setGeolocationOverride", params)
                 try:
                     if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber' or scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_default':
-                        browser.visit(product['scrapeurl'])
+                        browser.visit(scrapsite['scrapeurl'])
                         time.sleep(2)
                         html_source = browser.html
                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber':
@@ -257,7 +257,7 @@ for scrapsite in jsonscrapsites:
                     else:
                         browser.driver.set_script_timeout(300)
                         try:
-                            browser.visit(product['scrapeurl'])
+                            browser.visit(scrapsite['scrapeurl'])
                             time.sleep(2)
                             html_source = browser.html
                             if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber_alt':
@@ -319,7 +319,7 @@ for scrapsite in jsonscrapsites:
                         except:
                             print(traceback.format_exc())
                     browser.quit() 
-                    #browser.get(product['url'])
+                    #browser.get(scrapsite['url'])
                     #print("HTML:")
                     #print(html)
                 except HTTPError as err:
