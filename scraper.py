@@ -213,6 +213,20 @@ jsonprodexists = json.loads(r.content)
 #print(json.dumps(jsonscrapsites))
 for scrapsite in jsonscrapsites:
     #print(json.dumps(scrapsite))
+    # --> Check if any product import values should be pre-fetched from the domain misc.
+    incr_link = ''
+    incr_link_startnumber = ''
+    if scrapsite['scrapefield']['domainmisc']:
+        output = re.search(r'({incr_link}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
+        if len(output.group(1)) > 0:
+            incr_link = output.group(2)
+            scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link}.*?)\{', '', scrapsite['scrapefield']['domainmisc'])
+            output = re.search(r'({incr_link_startnumber}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
+            if len(output.group(1)) > 0:
+                incr_link_startnumber = output.group(2)
+                scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link_startnumber}.*?)\{', '', scrapsite['scrapefield']['domainmisc'])
+            else:
+                incr_link_startnumber = '0'
     # --> Ignore current product import URL if neccessary!
     if scrapsite['scrapefield']['productignorethisone'] == '1':
         continue
@@ -257,7 +271,7 @@ for scrapsite in jsonscrapsites:
                     else:
                         browser.driver.set_script_timeout(300)
                         try:
-                            browser.visit(scrapsite['scrapeurl'])
+                            browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
                             time.sleep(2)
                             html_source = browser.html
                             if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber_alt':
@@ -281,6 +295,9 @@ for scrapsite in jsonscrapsites:
                                 cur_scrollheight = browser.execute_script("return document.body.scrollHeight")
                                 new_scrollheight = cur_scrollheight
                                 while exists is True:
+                                    if incr_link != '':
+                                        browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
+                                        incr_link_startnumber = str(int(incr_link_startnumber) + 1)
                                     if onlyScrollDown is False:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
                                         click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
