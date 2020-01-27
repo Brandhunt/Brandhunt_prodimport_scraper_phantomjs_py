@@ -313,6 +313,8 @@ for scrapsite in jsonscrapsites:
                                                 if prod is not None:
                                                     products.append(str(etree.tostring(prod)))
                                         childrenCountNew = len(products)
+                                        print('chCOUNT: ' + childrenCount)
+                                        print('chCOUNTNEW: ' + childrenCountNew)
                                         exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector'])) if onlyScrollDown is False else False
                                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
                                             browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
