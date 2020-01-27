@@ -227,6 +227,8 @@ for scrapsite in jsonscrapsites:
                 scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link_startnumber}.*?)\{', '', scrapsite['scrapefield']['domainmisc'])
             else:
                 incr_link_startnumber = '0'
+    print(incr_link)
+    print(incr_link_startnumber)
     # --> Ignore current product import URL if neccessary!
     if scrapsite['scrapefield']['productignorethisone'] == '1':
         continue
