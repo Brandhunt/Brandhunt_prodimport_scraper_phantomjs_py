@@ -214,31 +214,6 @@ jsonprodexists = json.loads(r.content)
 #print(json.dumps(jsonscrapsites))
 for scrapsite in jsonscrapsites:
     #print(json.dumps(scrapsite))
-    print("Will scrape URL " + str(scrapsite['scrapeurl']))
-    # --> Check if any product import values should be pre-fetched from the domain misc.
-    incr_link = ''
-    incr_link_startnumber = ''
-    override_timeout = ''
-    if scrapsite['scrapefield']['domainmisc']:
-        #print(scrapsite['scrapefield']['domainmisc'])
-        output = re.search(r'({override_timeout}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
-        if output is not None and len(output.group(1)) > 0:
-            override_timeout = output.group(2)
-            scrapsite['scrapefield']['domainmisc'] = re.sub(r'({override_timeout}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
-            #print(scrapsite['scrapefield']['domainmisc'])
-        output = re.search(r'({incr_link}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
-        if output is not None and len(output.group(1)) > 0:
-            incr_link = output.group(2)
-            scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
-            #print(scrapsite['scrapefield']['domainmisc'])
-            output = re.search(r'({incr_link_startnumber}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
-            if output is not None and len(output.group(1)) > 0:
-                incr_link_startnumber = output.group(2)
-                scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link_startnumber}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
-            else:
-                incr_link_startnumber = '0'
-    #print(incr_link)
-    #print(incr_link_startnumber)
     # --> Ignore current product import URL if neccessary!
     if scrapsite['scrapefield']['productignorethisone'] == '1':
         continue
@@ -249,6 +224,32 @@ for scrapsite in jsonscrapsites:
         scrapsite['scrapefield']['phantomjsimport'] = 'phantomjsimport_pagenumber'
     # >>> GET THE HTML <<< #
     if scrapsite['scrapefield']['scrapetype'] == 'phantomjs_morph_io':
+        # --> Check if any product import values should be pre-fetched from the domain misc.
+        incr_link = ''
+        incr_link_startnumber = ''
+        override_timeout = ''
+        if scrapsite['scrapefield']['domainmisc']:
+            #print(scrapsite['scrapefield']['domainmisc'])
+            output = re.search(r'({override_timeout}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
+            if output is not None and len(output.group(1)) > 0:
+                override_timeout = output.group(2)
+                scrapsite['scrapefield']['domainmisc'] = re.sub(r'({override_timeout}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
+                #print(scrapsite['scrapefield']['domainmisc'])
+            output = re.search(r'({incr_link}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
+            if output is not None and len(output.group(1)) > 0:
+                incr_link = output.group(2)
+                scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
+                #print(scrapsite['scrapefield']['domainmisc'])
+                output = re.search(r'({incr_link_startnumber}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
+                if output is not None and len(output.group(1)) > 0:
+                    incr_link_startnumber = output.group(2)
+                    scrapsite['scrapefield']['domainmisc'] = re.sub(r'({incr_link_startnumber}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
+                else:
+                    incr_link_startnumber = '0'
+        #print(incr_link)
+        #print(incr_link_startnumber)
+        print("Will scrape URL " + str(scrapsite['scrapeurl']))
+        # --> Try to scrape the HTML!
         html_source = ''
         root = ''
         nextURLs = ''
