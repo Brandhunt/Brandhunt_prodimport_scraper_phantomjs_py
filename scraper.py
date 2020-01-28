@@ -377,6 +377,12 @@ for scrapsite in jsonscrapsites:
                                 url_elements = temp_root.cssselect(scrapsite['scrapefield']['productnumberselector'])
                                 if url_elements:
                                     nextURLs = graburls(str(etree.tostring(url_elements[int(int(url_elements.len()) - 1)])), False)
+                        except WebDriverException:
+                            print('Chrome not reachable or session expired(Page crash) - The URL will be rescraped again!')
+                            jsonscrapsites.append(scrapsite)
+                            browser.quit() 
+                            time.sleep(2)
+                            continue
                         except:
                             print(traceback.format_exc())
                     browser.quit() 
