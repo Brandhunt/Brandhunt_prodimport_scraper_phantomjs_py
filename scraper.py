@@ -214,6 +214,7 @@ jsonprodexists = json.loads(r.content)
 #print(json.dumps(jsonscrapsites))
 for scrapsite in jsonscrapsites:
     #print(json.dumps(scrapsite))
+    print("Will scrape URL " + str(scrapsite['scrapeurl']))
     # --> Check if any product import values should be pre-fetched from the domain misc.
     incr_link = ''
     incr_link_startnumber = ''
