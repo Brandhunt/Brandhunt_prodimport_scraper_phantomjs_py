@@ -239,8 +239,14 @@ for scrapsite in jsonscrapsites:
         incr_link = ''
         incr_link_startnumber = ''
         override_timeout = ''
+        allow_no_exists = False
         if scrapsite['scrapefield']['domainmisc']:
             #print(scrapsite['scrapefield']['domainmisc'])
+            output = re.search(r'({stop_on_loadmore_notfound}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
+            if output is not None and len(output.group(1)) > 0:
+                allow_no_exists = True
+                scrapsite['scrapefield']['domainmisc'] = re.sub(r'({stop_on_loadmore_notfound}.*?(?=\{))', '', scrapsite['scrapefield']['domainmisc'])
+                #print(scrapsite['scrapefield']['domainmisc'])
             output = re.search(r'({override_timeout}(.*?))\{', scrapsite['scrapefield']['domainmisc'])
             if output is not None and len(output.group(1)) > 0:
                 override_timeout = output.group(2)
@@ -385,11 +391,11 @@ for scrapsite in jsonscrapsites:
                                                 break
                                             cur_scrollheight = new_scrollheight
                                         delta_time = datetime.now() - start_time
-                                        if delta_time.total_seconds() > timeout:
+                                        if (delta_time.total_seconds() > timeout) or (allow_no_exists is True and exists is False):
                                             break
                                     exists = doeshtmlelementexist(temp_root.cssselect(scrapsite['scrapefield']['productloadmoreselector'])) if onlyScrollDown is False else False
                                     delta_time = datetime.now() - start_time
-                                    if delta_time.total_seconds() > timeout:
+                                    if (delta_time.total_seconds() > timeout) or (allow_no_exists is True and exists is False):
                                         break
                                 html_source = browser.html
                             else:
