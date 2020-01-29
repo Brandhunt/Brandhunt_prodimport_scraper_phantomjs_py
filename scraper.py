@@ -280,7 +280,7 @@ for scrapsite in jsonscrapsites:
             optionals.add_experimental_option('prefs', {'intl.accept_languages': 'sv',
                                                         'profile.default_content_setting_values.geolocation': 1,
                                                         'profile.default_content_settings.geolocation': 1})
-            with Browser('chrome', headless=False, options=optionals) as browser:
+            with Browser('chrome', headless=True, options=optionals) as browser:
                 browser.driver.set_page_load_timeout(300)
                 browser.driver.set_window_size(1920, 1080)
                 params = {"latitude": 59.3521,
