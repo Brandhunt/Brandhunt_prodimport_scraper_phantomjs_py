@@ -160,6 +160,15 @@ def doeshtmlelementexist(selectedel):
         return False
     return True
 
+# *** --- Wait for AJAX to finish for current browser driver --- *** #
+def wait_for_ajax(driver):
+    wait = WebDriverWait(driver, 15)
+    try:
+        wait.until(lambda driver: driver.execute_script('return jQuery.active') == 0)
+        wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    except Exception as e:
+        pass
+
 # --> First, check if the database should be reset:
 
 #if bool(os.environ['MORPH_RESET_DB']):
@@ -273,7 +282,8 @@ for scrapsite in jsonscrapsites:
                 try:
                     if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber' or scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_default':
                         browser.visit(scrapsite['scrapeurl'])
-                        time.sleep(2)
+                        #time.sleep(2)
+                        wait_for_ajax(browser.driver)
                         html_source = browser.html
                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_pagenumber':
                             temp_root = lxml.html.fromstring(html_source)
@@ -286,7 +296,8 @@ for scrapsite in jsonscrapsites:
                         try:
                             browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
                             #print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
-                            time.sleep(2)
+                            #time.sleep(2)
+                            wait_for_ajax(browser.driver)
                             html_source = browser.html
                             if scrapsite['scrapefield']['phantomjsimport'] != 'phantomjsimport_pagenumber_alt':
                                 temp_root = lxml.html.fromstring(html_source)
@@ -313,13 +324,15 @@ for scrapsite in jsonscrapsites:
                                     if incr_link != '':
                                         browser.visit(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
                                         #print(scrapsite['scrapeurl'] + incr_link + incr_link_startnumber)
-                                        time.sleep(2)
+                                        #time.sleep(2)
+                                        wait_for_ajax(browser.driver)
                                         incr_link_startnumber = str(int(incr_link_startnumber) + 1)
                                     if onlyScrollDown is False:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
                                         click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
                                         browser.driver.execute_script("arguments[0].click();", click_el)
-                                        time.sleep(clickTime)
+                                        #time.sleep(clickTime)
+                                        wait_for_ajax(browser.driver)
                                     html_source = browser.html
                                     temp_root = lxml.html.fromstring(html_source)
                                     foundproducts = temp_root.cssselect(scrapsite['scrapefield']['productselector'])
@@ -339,7 +352,8 @@ for scrapsite in jsonscrapsites:
                                             try:
                                                 click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
                                                 browser.driver.execute_script("arguments[0].click();", click_el)
-                                                time.sleep(clickTime)
+                                                #time.sleep(clickTime)
+                                                wait_for_ajax(browser.driver)
                                             except NoSuchElementException:
                                                 print('"LOAD MORE"-element no longer found!')
                                                 pass
@@ -359,6 +373,7 @@ for scrapsite in jsonscrapsites:
                                         if scrapsite['scrapefield']['phantomjsimport'] == 'phantomjsimport_scroll_loadmore_wait':
                                             browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
                                             time.sleep(scrollTime)
+                                            wait_for_ajax(browser.driver)
                                             new_scrollheight = browser.execute_script("return document.body.scrollHeight")
                                             print('scrollh: ' + str(cur_scrollheight))
                                             print('scrollhNEW: ' + str(new_scrollheight))
