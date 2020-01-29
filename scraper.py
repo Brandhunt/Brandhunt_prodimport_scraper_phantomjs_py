@@ -302,7 +302,7 @@ for scrapsite in jsonscrapsites:
                                     exists = True
                                 timeout = 300 if override_timeout == '' else int(override_timeout) # <-- Amount of seconds to run the whole thing
                                 #print(timeout)
-                                clickTime = 2 # <--- Amount of time to wait between each click
+                                clickTime = 5 # <--- Amount of time to wait between each click
                                 scrollTime = 0.5 # <--- Amount of time to wait between each scroll
                                 start_time = datetime.now()
                                 #browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
