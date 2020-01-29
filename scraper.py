@@ -341,6 +341,7 @@ for scrapsite in jsonscrapsites:
                                                 browser.driver.execute_script("arguments[0].click();", click_el)
                                                 time.sleep(clickTime)
                                             except NoSuchElementException:
+                                                print('"LOAD MORE"-element no longer found!')
                                                 pass
                                             except:
                                                 print(traceback.format_exc())
