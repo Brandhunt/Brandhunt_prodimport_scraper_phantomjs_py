@@ -371,6 +371,7 @@ for scrapsite in jsonscrapsites:
                                                 print(traceback.format_exc())
                                         html_source = browser.html
                                         temp_root = lxml.html.fromstring(html_source)
+                                        foundproducts = temp_root.cssselect(scrapsite['scrapefield']['productselector'])
                                         products = []
                                         if foundproducts:
                                             for prod in foundproducts:
