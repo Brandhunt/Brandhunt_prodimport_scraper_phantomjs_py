@@ -333,7 +333,7 @@ for scrapsite in jsonscrapsites:
                                         #browser.find_by_css(scrapsite['scrapefield']['productloadmoreselector']).first.click()
                                         click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
                                         browser.driver.execute_script("arguments[0].click();", click_el)
-                                        time.sleep(clickTime)
+                                        #time.sleep(clickTime)
                                         WebDriverWait(browser.driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, scrapsite['scrapefield']['productloadmoreselector'])))
                                         #wait_for_ajax(browser.driver)
                                     html_source = browser.html
@@ -355,7 +355,7 @@ for scrapsite in jsonscrapsites:
                                             try:
                                                 click_el = browser.driver.find_element_by_css_selector(scrapsite['scrapefield']['productloadmoreselector'])
                                                 browser.driver.execute_script("arguments[0].click();", click_el)
-                                                time.sleep(clickTime)
+                                                #time.sleep(clickTime)
                                                 WebDriverWait(browser.driver, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, scrapsite['scrapefield']['productloadmoreselector'])))
                                                 #wait_for_ajax(browser.driver)
                                             except NoSuchElementException:
