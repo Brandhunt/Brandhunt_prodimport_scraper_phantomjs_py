@@ -5,7 +5,7 @@
 # Custom version of scraperwiki library
 #-e git+http://github.com/openaustralia/scraperwiki-python.git@morph_defaults#egg=scraperwiki
 
-mysql-connector-python==8.0.11
+mysql-connector-python==8.0.14
 scraperwiki==0.5.1
 python-slugify>=4.0.0
 selenium==3.141.0
